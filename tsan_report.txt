@@ -1,0 +1,5 @@
+Submitted: 45941
+Expected:  80000
+Actual:    45941
+Droped:    34059
+FAIL
