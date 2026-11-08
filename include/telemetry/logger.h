@@ -25,7 +25,7 @@ struct LoggerStats {
 // 日志配置
 struct LoggerConfig {
     std::string file_path = "telemetry.log";
-    LogLevel level = LogLevel::Info;
+    LogLevel level = LogLevel::Debug;
     std::size_t max_size = 1024 * 1024;
     std::size_t max_files = 3;
     std::size_t queue_capacity = 1000;

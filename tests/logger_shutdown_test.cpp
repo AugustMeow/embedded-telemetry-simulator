@@ -21,7 +21,8 @@ int main()
     config.file_path = "shutdown_test.log";
     config.max_files = 1;
     config.max_size = 100 * 1024*1024;
-    
+    // 每次测试使用干净的日志文件
+    std::remove("shutdown_test.log");
     logger.init(config);
     std::atomic<int> accepted{0};
     std::vector<std::thread> producers;

@@ -15,6 +15,7 @@
 
 #   define COL(x)  "\033[;" #x "m"
 #   define RED     COL(31)
+#   define YELLOW  COL(33)
 #   define GRAY    "\033[0m"
 
 FILE *fp = NULL;
@@ -312,7 +313,11 @@ bool Logger::write_line(const std::string& line)
     _file.write(
         line.data(),
         static_cast<std::streamsize>(line.size()));
-
+    if(_level == LogLevel::Debug)
+        fprintf(stdout, YELLOW);
+    fprintf(stdout, "%s", line.c_str());
+    
+    fflush(stdout);
     if (!_file) {
         return false;
     }

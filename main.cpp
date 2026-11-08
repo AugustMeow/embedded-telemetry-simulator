@@ -142,7 +142,7 @@ int main(int argc, char* argv[])
 	Logger logger;
 
 	try {
-		//logger.init(config.logger);
+		logger.init(config.logger);
         //logger.init(config.logger);
 	}
 	catch (const std::exception& e) {
@@ -155,8 +155,28 @@ int main(int argc, char* argv[])
 	telemetry::TelemetryApplication app(logger);
 	#endif
 	//app.init();
-	telemetry::TCPServer server;
+	telemetry::TCPServer server(logger);
 	server.init(10000);
+
+#if 0
+	//压缩测试
+	ClientState state;
+
+	state.send_buf = std::string(16384, 'A');
+	state.send_offset = 8192;
+
+	std::cout << "Before compact:"
+          << " size=" << state.send_buf.size()
+          << " offset=" << state.send_offset
+          << std::endl;
+
+	server.compact_send_buffer(state);
+
+	std::cout << "After compact:"
+          << " size=" << state.send_buf.size()
+          << " offset=" << state.send_offset
+          << std::endl;
+#endif
 	std::cout << "Temperature min: "
 		<< config.sensor.temperature_min << '\n';
 
@@ -191,12 +211,11 @@ int main(int argc, char* argv[])
 	auto next_tick = Clock::now();
 	logger.info("Embedded Telemetry Simulator started");
 	std::cout << "Embedded Telemetry Simulator started\n";
-
+#if 0
 	//telemetry::MessageType type;
 	uint8_t type = 1;
 	uint8_t *buffer = (uint8_t*)malloc(8);
 	uint32_t length = 4096;
-#if 1
 	telemetry::Protocol proto;
 	if(proto.encoder_header(buffer,type, length)){
 		for(int i = 0; i < 8; i++){
@@ -207,7 +226,6 @@ int main(int argc, char* argv[])
 	else{
 		std::cout << " false" << std::endl;
 	}
-#endif
 	//buffer = "544C010100000005";
 	type = 0;
 	length = 0;
@@ -219,16 +237,19 @@ int main(int argc, char* argv[])
 	}
 
 	if(buffer) free(buffer);
+#endif
 
 	while (running) {
 		const auto temperature_reading = temperature.read();
 		const auto voltage_reading = voltage.read();
 
+		#if 0
 			app.process_reading(temperature, temperature_reading,
 					config.sensor.temperature_min,config.sensor.temperature_max, "C");
 			app.process_reading(voltage, voltage_reading,
 					config.sensor.voltage_min,config.sensor.voltage_max, "V");
-		next_tick += interval;
+		#endif
+					next_tick += interval;
 		std::this_thread::sleep_until(next_tick);
 	}
 	logger.info("Simulator stopped");

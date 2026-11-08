@@ -25,13 +25,13 @@ add_executable(telemetry_sim
 )
 
 # Independent tests
-add_executable(telemetry_test
+add_executable(validator_test
     tests/test.cpp
-    src/sensor.cpp
     src/validator.cpp
-	src/logger.cpp
-    src/application.cpp
-    src/config.cpp
+)
+
+target_include_directories(validator_test
+    PRIVATE include
 )
 
 
@@ -42,14 +42,8 @@ add_executable(protocol_test
 )
 
 target_link_libraries(telemetry_sim PRIVATE Threads::Threads)
-target_link_libraries(telemetry_test PRIVATE Threads::Threads)
 
 target_include_directories(telemetry_sim
-    PRIVATE
-        ${PROJECT_SOURCE_DIR}/include
-)
-
-target_include_directories(telemetry_test
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
 )
@@ -93,7 +87,7 @@ target_link_libraries(logger_shutdown_test
 )
 
 # Compiler warnings
-foreach(target telemetry_sim telemetry_test)
+foreach(target telemetry_sim validator_test)
     target_compile_options(${target}
         PRIVATE
             -Wall
@@ -106,7 +100,7 @@ enable_testing()
 
 add_test(
     NAME validator_tests
-    COMMAND telemetry_test
+    COMMAND validator_test
 )
 
 install(TARGETS telemetry_sim
